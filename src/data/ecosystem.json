@@ -1,0 +1,121 @@
+{
+  "categories": [
+    {
+      "id": "foundation_models",
+      "name": "Frontier Foundation Models",
+      "items": [
+        {"id": "gpt-5.5", "name": "GPT-5.5", "creator": "OpenAI", "description": "The Enterprise Integrator. A versatile, multimodal model with an unmatched horizontal ecosystem.", "tags": ["Text", "Multimodal", "Enterprise"]},
+        {"id": "claude-opus-4.7", "name": "Claude Opus 4.7", "creator": "Anthropic", "description": "The paramount software engineering model. Features advanced autonomous coding and strict safety.", "tags": ["Text", "Coding"]},
+        {"id": "gemini-3.1-pro", "name": "Gemini 3.1 Pro", "creator": "Google", "description": "The apex of algorithmic reasoning. Excels at processing entire code repositories.", "tags": ["Text", "Coding", "Reasoning"]},
+        {"id": "kimi-k2.6", "name": "Kimi K2.6", "creator": "Kimi", "description": "High-context model excelling in massive document synthesis.", "tags": ["Text", "Context"]},
+        {"id": "mimo-v2.5-pro", "name": "MiMo-V2.5-Pro", "creator": "Xiaomi", "description": "Advanced flagship reasoning model.", "tags": ["Text"]},
+        {"id": "muse-spark", "name": "Muse Spark", "creator": "Meta", "description": "High-tier open-weight model.", "tags": ["Text", "Open Source"]},
+        {"id": "qwen3.6-max", "name": "Qwen3.6 Max", "creator": "Alibaba", "description": "Alibaba's leading multilingual assistant covering broader Asian markets.", "tags": ["Text", "Multilingual"]},
+        {"id": "deepseek-v4-pro", "name": "DeepSeek V4 Pro", "creator": "DeepSeek", "description": "Highly efficient and capable reasoning model.", "tags": ["Text", "Reasoning", "Efficient"]},
+        {"id": "glm-5.1", "name": "GLM-5.1", "creator": "Z AI", "description": "Leading open-source alternative from the Chinese market.", "tags": ["Text", "Open Source"]},
+        {"id": "minimax-m2.7", "name": "MiniMax-M2.7", "creator": "MiniMax", "description": "Powerful reasoning model providing backend logic.", "tags": ["Text", "Logic"]},
+        {"id": "grok-4.20", "name": "Grok 4.20", "creator": "xAI", "description": "The Real-Time Researcher. Bridges search and synthesis.", "tags": ["Text", "Search", "Math"]}
+      ]
+    },
+    {
+      "id": "text_to_image",
+      "name": "Image Generation & Editing",
+      "items": [
+        {"id": "gpt-image-2", "name": "GPT Image 2", "creator": "OpenAI", "description": "Leading text-to-image and image editing flagship.", "tags": ["Image Generation", "Image Editing"]},
+        {"id": "nano-banana-2", "name": "Nano Banana 2 (Gemini 3.1 Flash)", "creator": "Google", "description": "High-speed, high-quality image generation preview.", "tags": ["Image Generation", "Fast"]},
+        {"id": "seedream-4.5", "name": "Seedream 4.5", "creator": "ByteDance Seed", "description": "Leading image synthesis model.", "tags": ["Image Generation"]},
+        {"id": "flux-2", "name": "FLUX.2", "creator": "Black Forest Labs", "description": "Open-weight image generation powerhouse.", "tags": ["Image Generation", "Open Source"]},
+        {"id": "mai-image-2", "name": "MAI-Image-2", "creator": "Microsoft", "description": "Microsoft's premier image generator.", "tags": ["Image Generation"]},
+        {"id": "grok-imagine", "name": "Grok Imagine Image", "creator": "xAI", "description": "Real-time, uncensored image synthesis.", "tags": ["Image Generation"]},
+        {"id": "imagineart-2.0", "name": "ImagineArt 2.0", "creator": "ImagineArt", "description": "Generates visual assets like hero images and illustrations.", "tags": ["Image Generation", "Assets"]},
+        {"id": "wan-2.6-image", "name": "Wan2.6 Image", "creator": "Alibaba", "description": "Advanced image generation.", "tags": ["Image Generation"]},
+        {"id": "kolors-2.1", "name": "Kolors 2.1", "creator": "KlingAI", "description": "High-fidelity Chinese image generator.", "tags": ["Image Generation"]},
+        {"id": "recraft-v4-pro", "name": "Recraft V4 Pro", "creator": "Recraft", "description": "Professional vector and raster asset generation.", "tags": ["Image Generation", "Vector"]},
+        {"id": "vivago-2.1", "name": "Vivago 2.1", "creator": "HiDream", "description": "Text to image synthesis.", "tags": ["Image Generation"]},
+        {"id": "hunyuan-image-3.0", "name": "HunyuanImage 3.0", "creator": "Tencent", "description": "Top-tier Chinese image model.", "tags": ["Image Generation"]},
+        {"id": "vidu-q2", "name": "Vidu Q2", "creator": "Vidu", "description": "High-quality image synthesizer.", "tags": ["Image Generation"]},
+        {"id": "firefly-5", "name": "Firefly Image 5", "creator": "Adobe", "description": "Safe-for-commercial-use generation.", "tags": ["Image Generation", "Enterprise"]},
+        {"id": "sd-3.5-large", "name": "Stable Diffusion 3.5 Large", "creator": "Stability.ai", "description": "Standard open-source image generation model.", "tags": ["Image Generation", "Open Source"]},
+        {"id": "midjourney-v7", "name": "Midjourney v7 Alpha", "creator": "Midjourney", "description": "The absolute global standard for breathtaking static concept art.", "tags": ["Image Generation", "Art", "Aesthetics"]}
+      ]
+    },
+    {
+      "id": "video_generation",
+      "name": "Video Synthesis (T2V & I2V)",
+      "items": [
+        {"id": "happyhorse-1.0", "name": "HappyHorse-1.0", "creator": "Alibaba-ATH", "description": "Leading text-to-video and image-to-video model on the leaderboards.", "tags": ["Video Generation", "T2V", "I2V"]},
+        {"id": "dreamina-seedance-2.0", "name": "Dreamina Seedance 2.0", "creator": "ByteDance Seed", "description": "High-quality 720p cinematic rendering.", "tags": ["Video Generation"]},
+        {"id": "kling-3.0-omni", "name": "Kling 3.0 Omni", "creator": "KlingAI", "description": "Exceptional 3D motion realism and cinematic control.", "tags": ["Video Generation", "3D Motion"]},
+        {"id": "skyreels-v4", "name": "SkyReels V4", "creator": "Skywork AI", "description": "High-fidelity video synthesis.", "tags": ["Video Generation"]},
+        {"id": "grok-imagine-video", "name": "Grok Imagine Video", "creator": "xAI", "description": "Real-time action video generation.", "tags": ["Video Generation"]},
+        {"id": "vidu-q3-pro", "name": "Vidu Q3 Pro", "creator": "Vidu", "description": "Professional video rendering engine.", "tags": ["Video Generation"]},
+        {"id": "veo-3.1", "name": "Veo 3.1", "creator": "Google", "description": "Apex of cinematic rendering. Features a highly robust physics-based motion engine.", "tags": ["Video Generation", "Cinematic"]},
+        {"id": "runway-gen-4.5", "name": "Runway Gen-4.5", "creator": "Runway", "description": "Granular control through multi-motion brush and directing tools.", "tags": ["Video Generation", "Editing"]},
+        {"id": "pixverse-v6", "name": "PixVerse V6", "creator": "PixVerse", "description": "Fast and detailed text/image to video generation.", "tags": ["Video Generation"]},
+        {"id": "ray-3", "name": "Ray 3", "creator": "Luma Labs", "description": "High-speed video rendering.", "tags": ["Video Generation"]},
+        {"id": "sora-2-pro", "name": "Sora 2 Pro", "creator": "OpenAI", "description": "Dynamic action scenes, maintaining multi-scene continuity.", "tags": ["Video Generation", "Continuity"]},
+        {"id": "hailuo-2.3", "name": "Hailuo 2.3", "creator": "MiniMax", "description": "Excellent video dynamics and physics.", "tags": ["Video Generation"]},
+        {"id": "ltx-2.3-pro", "name": "LTX-2.3 Pro", "creator": "Lightricks", "description": "Open weights high-tier video synthesis.", "tags": ["Video Generation", "Open Source"]},
+        {"id": "pika-2.5", "name": "Pika 2.5", "creator": "Pika Art", "description": "Stylized video generation and effects.", "tags": ["Video Generation"]},
+        {"id": "marey", "name": "Marey", "creator": "Moonvalley", "description": "Creative video sequencing.", "tags": ["Video Generation"]}
+      ]
+    },
+    {
+      "id": "speech_audio",
+      "name": "Speech (TTS) & Audio",
+      "items": [
+        {"id": "realtime-tts-1.5-max", "name": "Realtime TTS 1.5 Max", "creator": "Inworld", "description": "Ultra-low latency, highly emotional voice cloning.", "tags": ["Audio", "TTS", "Real-time"]},
+        {"id": "gemini-3.1-flash-tts", "name": "Gemini 3.1 Flash TTS", "creator": "Google", "description": "Extremely fast, highly expressive voices.", "tags": ["Audio", "TTS"]},
+        {"id": "eleven-v3", "name": "Eleven v3", "creator": "ElevenLabs", "description": "The undisputed leader in AI audio, providing ultra-realistic text-to-speech.", "tags": ["Audio", "TTS", "Voice"]},
+        {"id": "speech-2.8-hd", "name": "Speech 2.8 HD", "creator": "MiniMax", "description": "High-definition TTS and audio synthesis.", "tags": ["Audio", "TTS"]},
+        {"id": "step-tts-2", "name": "Step TTS 2", "creator": "StepFun", "description": "Expressive Chinese and English TTS.", "tags": ["Audio", "TTS"]},
+        {"id": "fish-audio-s2-pro", "name": "Fish Audio S2 Pro", "creator": "Fish Audio", "description": "Open-weight TTS model.", "tags": ["Audio", "TTS", "Open Source"]},
+        {"id": "azure-hd-2.5", "name": "Azure HD 2.5", "creator": "Microsoft", "description": "Enterprise-grade speech APIs.", "tags": ["Audio", "TTS", "Enterprise"]}
+      ]
+    },
+    {
+      "id": "music_generation",
+      "name": "Instrumental & Music Generation",
+      "items": [
+        {"id": "mureka-v8", "name": "Mureka V8", "creator": "Mureka", "description": "Specialized AI music and sound effects generator for content creators.", "tags": ["Music", "Audio", "Generation"]},
+        {"id": "suno-v5", "name": "Suno V5", "creator": "Suno", "description": "The premier text-to-music generation platform.", "tags": ["Music", "Audio", "Generation"]},
+        {"id": "lyria-3-pro", "name": "Lyria 3 Pro", "creator": "Google", "description": "Advanced multi-track music generation.", "tags": ["Music", "Audio"]},
+        {"id": "eleven-music", "name": "Eleven Music", "creator": "ElevenLabs", "description": "High-fidelity music creation.", "tags": ["Music", "Audio"]},
+        {"id": "minimax-music", "name": "MiniMax Music 2.5+", "creator": "MiniMax", "description": "Instrumental track synthesis.", "tags": ["Music", "Audio"]},
+        {"id": "fuzz-2.0", "name": "FUZZ-2.0", "creator": "Producer.ai", "description": "Producer-focused generation.", "tags": ["Music", "Audio"]},
+        {"id": "udio-v1.5", "name": "Udio v1.5", "creator": "Udio", "description": "High-quality instrumental tracks.", "tags": ["Music", "Audio"]},
+        {"id": "stable-audio-2.0", "name": "Stable Audio 2.0", "creator": "Stability.ai", "description": "Open-access audio synthesis.", "tags": ["Music", "Audio", "Open Source"]}
+      ]
+    },
+    {
+      "id": "vector_databases",
+      "name": "Vector Databases & Semantic Search",
+      "items": [
+        {"id": "pinecone", "name": "Pinecone", "creator": "Pinecone", "description": "Fully Managed (SaaS) vector database. Zero-ops serverless architecture.", "tags": ["Database", "Vector", "Managed"]},
+        {"id": "milvus", "name": "Milvus", "creator": "Zilliz", "description": "Built for massive-scale performance.", "tags": ["Database", "Vector", "Open Source"]},
+        {"id": "weaviate", "name": "Weaviate", "creator": "Weaviate", "description": "Industry-leading hybrid search.", "tags": ["Database", "Vector"]},
+        {"id": "pgvector", "name": "pgvector", "creator": "PostgreSQL", "description": "PostgreSQL Extension. Unified relational and semantic data.", "tags": ["Database", "Vector", "SQL"]},
+        {"id": "chroma", "name": "Chroma", "creator": "Chroma", "description": "The standard for rapid prototyping.", "tags": ["Database", "Vector", "Local"]}
+      ]
+    },
+    {
+      "id": "cloud_hosting",
+      "name": "Cloud Hosting & Agent Runtimes",
+      "items": [
+        {"id": "vercel-sandbox", "name": "Vercel Sandbox", "creator": "Vercel", "description": "Agent Runtime built on Firecracker microVMs.", "tags": ["Hosting", "Serverless", "Agents"]},
+        {"id": "fly-io", "name": "Fly.io Machines", "creator": "Fly.io", "description": "KVM hardware-isolated VMs accepting any OCI container.", "tags": ["Hosting", "VMs", "Stateful"]},
+        {"id": "northflank", "name": "Northflank", "creator": "Northflank", "description": "Runs the complete AI stack in one place.", "tags": ["Hosting", "Infrastructure"]}
+      ]
+    },
+    {
+      "id": "agentic_ide",
+      "name": "Agentic Developer Workspace (IDEs)",
+      "items": [
+        {"id": "cursor", "name": "Cursor", "creator": "Anysphere", "description": "AI-First IDE market leader.", "tags": ["IDE", "Coding"]},
+        {"id": "claude-code", "name": "Claude Code", "creator": "Anthropic", "description": "Command-line agent for complex refactoring.", "tags": ["CLI", "Coding", "Agent"]},
+        {"id": "bolt-new", "name": "Bolt.new", "creator": "StackBlitz", "description": "Scaffolding optimized for rapid MVP generation.", "tags": ["Builder", "Frontend"]},
+        {"id": "lovable", "name": "Lovable", "creator": "Lovable", "description": "Vibe coding platform for generating high-quality designs.", "tags": ["Builder", "Frontend"]}
+      ]
+    }
+  ]
+}
