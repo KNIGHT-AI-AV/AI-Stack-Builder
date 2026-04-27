@@ -66,7 +66,11 @@ export default function ChatUI({ onSubmit, isLoading }: ChatUIProps) {
           className={styles.submitBtn}
           disabled={!input.trim() || isLoading}
         >
-          {isLoading ? <Loader2 className={styles.loader} size={20} /> : <Send size={20} />}
+          {isLoading ? (
+            <>Architecting... <Loader2 className={styles.loader} size={16} /></>
+          ) : (
+            <>Architect <span className="kr-arrow">→</span></>
+          )}
         </button>
       </motion.form>
     </motion.div>

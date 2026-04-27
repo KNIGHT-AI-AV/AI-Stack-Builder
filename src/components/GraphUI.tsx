@@ -18,7 +18,7 @@ interface NodeData {
 const CustomNode = ({ data }: { data: NodeData }) => {
   return (
     <div className={styles.customNode}>
-      <Handle type="target" position={Position.Top} style={{ background: '#4b6bfc', border: 'none', width: '8px', height: '8px' }} />
+      <Handle type="target" position={Position.Top} style={{ background: 'var(--red)', border: 'none', width: '8px', height: '8px' }} />
       <div className={styles.category}>{data.category}</div>
       <div className={styles.title}>{data.label}</div>
       <div className={styles.description}>{data.description}</div>
@@ -28,7 +28,7 @@ const CustomNode = ({ data }: { data: NodeData }) => {
           {data.metrics.price && <span className={styles.metricBadge}>${data.metrics.price}/1M</span>}
         </div>
       )}
-      <Handle type="source" position={Position.Bottom} style={{ background: '#9d4bfc', border: 'none', width: '8px', height: '8px' }} />
+      <Handle type="source" position={Position.Bottom} style={{ background: 'var(--hot-red)', border: 'none', width: '8px', height: '8px' }} />
     </div>
   );
 };
@@ -69,12 +69,12 @@ export default function GraphUI({ nodesData, edgesData }: GraphUIProps) {
       target: edge.target,
       label: edge.label,
       animated: true,
-      style: { stroke: '#4b6bfc', strokeWidth: 2 },
-      labelStyle: { fill: '#fff', fontWeight: 500 },
-      labelBgStyle: { fill: '#141419', fillOpacity: 0.8 },
+      style: { stroke: 'var(--red)', strokeWidth: 2 },
+      labelStyle: { fill: '#fff', fontWeight: 500, fontFamily: 'var(--mono)', fontSize: '10px', textTransform: 'uppercase' },
+      labelBgStyle: { fill: 'var(--bg-alt)', fillOpacity: 0.8 },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: '#4b6bfc',
+        color: 'var(--red)',
       },
     }));
 
@@ -108,7 +108,7 @@ export default function GraphUI({ nodesData, edgesData }: GraphUIProps) {
         proOptions={{ hideAttribution: true }}
       >
         <Background color="#ffffff" gap={20} size={1} style={{ opacity: 0.05 }} />
-        <Controls style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--surface-base)', fill: 'white', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }} />
+        <Controls style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg)', fill: 'white', borderRadius: '8px', border: '1px solid var(--rule)' }} />
       </ReactFlow>
     </motion.div>
   );

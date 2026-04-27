@@ -3,83 +3,78 @@
   height: 60vh;
   min-height: 500px;
   position: relative;
-  border-radius: 24px;
+  border-radius: 16px;
   overflow: hidden;
-  background: rgba(10, 10, 15, 0.4);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--surface-border);
+  background: rgba(8, 8, 10, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--rule);
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
   margin-top: 2rem;
   z-index: 1;
 }
 
 .customNode {
-  background: var(--surface-base);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(228, 18, 28, 0.05) 0%, rgba(8, 8, 10, 0.94) 100%), rgba(10, 10, 14, 0.9);
+  border: 1px solid rgba(228, 18, 28, 0.30);
+  border-radius: 2px;
   padding: 1.5rem;
   width: 280px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-  transition: all 0.3s ease;
+  transition: all 0.3s var(--ease);
   position: relative;
   overflow: hidden;
-}
-
-.customNode::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  opacity: 0.8;
+  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .customNode:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(75, 107, 252, 0.2);
+  border-color: var(--red);
+  box-shadow: 0 8px 32px rgba(228, 18, 28, 0.3);
 }
 
 .category {
-  font-size: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--primary);
+  letter-spacing: 0.1em;
+  color: var(--red);
   margin-bottom: 0.5rem;
   font-weight: 600;
 }
 
 .title {
+  font-family: "Knight Display", sans-serif;
   font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--foreground);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--ink);
   margin-bottom: 0.5rem;
 }
 
 .description {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.4;
+  font-size: 0.85rem;
+  color: var(--dim);
+  line-height: 1.5;
 }
 
 .metrics {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.8rem;
+  border-top: 1px solid var(--rule);
   display: flex;
   justify-content: space-between;
 }
 
 .metricBadge {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 8px;
-  border-radius: 8px;
-  color: var(--foreground);
+  font-family: "Knight Smoothie", "Knight Display", serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink);
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
 }
 
 .emptyState {
@@ -87,7 +82,9 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 1.2rem;
-  font-weight: 300;
+  color: var(--dim);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.85rem;
 }

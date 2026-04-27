@@ -8,6 +8,7 @@
   max-width: 800px;
   margin: 0 auto;
   z-index: 10;
+  margin-top: 10vh;
 }
 
 .header {
@@ -16,18 +17,19 @@
 }
 
 .title {
-  font-size: 3rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #fcfcfc 0%, #a0a0a0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-family: "Knight Display", sans-serif;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1.15;
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 300;
+  color: var(--dim);
+  line-height: 1.8;
 }
 
 .inputWrapper {
@@ -35,58 +37,66 @@
   width: 100%;
   display: flex;
   align-items: center;
-  background: var(--surface-base);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--surface-border);
-  border-radius: 24px;
-  padding: 0.5rem 1rem;
-  box-shadow: var(--glass-shadow);
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s var(--ease);
 }
 
 .inputWrapper:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 20px var(--primary-glow);
+  border-color: rgba(228, 18, 28, 0.4);
+  box-shadow: 0 0 0 3px rgba(228, 18, 28, 0.12);
 }
 
 .input {
   flex: 1;
   background: transparent;
   border: none;
-  color: var(--foreground);
-  font-size: 1.1rem;
+  color: var(--ink);
+  font-size: 1.15rem;
   padding: 1rem;
   outline: none;
-  font-family: inherit;
+  font-family: "Knight Display", sans-serif;
+  caret-color: var(--red);
 }
 
 .input::placeholder {
   color: rgba(255, 255, 255, 0.3);
+  font-family: "Knight Display", sans-serif;
 }
 
 .submitBtn {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  background: var(--red);
+  color: #fff;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: white;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  gap: 0.5rem;
 }
 
 .submitBtn:hover:not(:disabled) {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px var(--secondary-glow);
+  background: var(--hot-red);
+  border-color: var(--hot-red);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 28px -8px rgba(228, 18, 28, 0.65);
+  transform: translateY(-1px);
 }
 
 .submitBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  filter: grayscale(1);
 }
 
 .loader {
