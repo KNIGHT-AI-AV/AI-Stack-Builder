@@ -1,0 +1,11 @@
+.git
+.github
+.next
+.firebase
+firebase-dist
+node_modules
+coverage
+infra/google/*.generated.*
+*.log
+.env*
+npm-debug.log*

@@ -103,6 +103,16 @@
   animation: spin 1s linear infinite;
 }
 
+.error {
+  width: 100%;
+  margin: 0.85rem 0 0;
+  color: #ff8f95;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }

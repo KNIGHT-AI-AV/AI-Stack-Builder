@@ -4,14 +4,23 @@ import React, { useState } from 'react';
 import ChatUI from '@/components/ChatUI';
 import GraphUI from '@/components/GraphUI';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { StackGraph } from '@/lib/graph';
+
+interface ApiErrorPayload {
+  error?: {
+    message?: string;
+  };
+}
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [graphData, setGraphData] = useState<{ nodes: any[]; edges: any[] } | null>(null);
+  const [graphData, setGraphData] = useState<StackGraph | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChatSubmit = async (prompt: string) => {
     setIsLoading(true);
-    setGraphData(null); // Reset graph
+    setGraphData(null);
+    setErrorMessage(null);
 
     try {
       const res = await fetch('/api/chat', {
@@ -21,30 +30,14 @@ export default function Home() {
       });
 
       if (!res.ok) {
-        throw new Error('Network response was not ok');
+        const payload = await res.json().catch(() => null) as ApiErrorPayload | null;
+        throw new Error(payload?.error?.message || 'The architecture service could not complete this request.');
       }
 
-      const data = await res.json();
-      
-      // We can also trigger the metrics fetch here if needed, 
-      // but for MVP we will just render what the AI returned.
-      
-      setGraphData({
-        nodes: data.nodes || [],
-        edges: data.edges || []
-      });
+      const data = await res.json() as StackGraph;
+      setGraphData(data);
     } catch (error) {
-      console.error('Error generating graph:', error);
-      // Fallback dummy data if API fails locally without key just to show it works
-      setGraphData({
-        nodes: [
-          { id: '1', data: { label: 'Cursor', category: 'IDE', description: 'AI-First IDE' } },
-          { id: '2', data: { label: 'Vercel Sandbox', category: 'Hosting', description: 'Agent Runtime' } }
-        ],
-        edges: [
-          { id: 'e1-2', source: '1', target: '2', label: 'deploys to' }
-        ]
-      });
+      setErrorMessage(error instanceof Error ? error.message : 'The architecture service could not complete this request.');
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +52,7 @@ export default function Home() {
         transition={{ duration: 0.6, ease: 'easeInOut' }}
       />
 
-      <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} />
+      <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} errorMessage={errorMessage} />
 
       <AnimatePresence>
         {graphData && (

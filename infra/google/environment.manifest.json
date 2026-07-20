@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "plainEnvironment": {
+    "NODE_ENV": "production",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "HOSTNAME": "0.0.0.0",
+    "PORT": "8080",
+    "AI_STACK_PUBLIC_URL": "https://knight-ai-stack-builder.web.app",
+    "AI_STACK_ALLOWED_ORIGINS": "https://knight-ai-stack-builder.web.app,https://knight-ai-stack-builder.firebaseapp.com",
+    "AI_STACK_OPENROUTER_MODEL": "openai/gpt-4.1-mini",
+    "AI_STACK_CHAT_RATE_LIMIT": "10",
+    "AI_STACK_CHAT_CONCURRENCY": "4",
+    "AI_STACK_CHAT_TIMEOUT_MS": "25000",
+    "AI_STACK_METRICS_RATE_LIMIT": "60",
+    "AI_STACK_METRICS_TIMEOUT_MS": "12000",
+    "AI_STACK_METRICS_CACHE_SECONDS": "3600",
+    "AI_STACK_METRICS_STALE_SECONDS": "21600"
+  },
+  "secretEnvironment": {
+    "OPENROUTER_API_KEY": {
+      "secretId": "ai-stack-builder-openrouter-api-key",
+      "versionPolicy": "numeric-pinned"
+    },
+    "ARTIFICIAL_ANALYSIS_API_KEY": {
+      "secretId": "ai-stack-builder-artificial-analysis-api-key",
+      "versionPolicy": "numeric-pinned"
+    }
+  },
+  "releaseEnvironment": {
+    "AI_STACK_SOURCE_REVISION": "40-character-git-commit",
+    "AI_STACK_IMAGE_DIGEST": "sha256-digest"
+  }
+}

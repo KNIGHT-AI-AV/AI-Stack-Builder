@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "product": "ai-stack-builder",
+  "owner": "knight-ai-av",
+  "environment": "production",
+  "projectId": "knight-ai-av-site",
+  "region": "us-central1",
+  "hosting": {
+    "site": "knight-ai-stack-builder",
+    "publicDirectory": "firebase-dist",
+    "apiRewrite": "/api/**"
+  },
+  "cloudRun": {
+    "service": "ai-stack-builder-api",
+    "imageRepository": "us-central1-docker.pkg.dev/knight-ai-av-site/knight/ai-stack-builder-api",
+    "runtimeServiceAccount": "ai-stack-builder-runtime@knight-ai-av-site.iam.gserviceaccount.com",
+    "ingress": "all",
+    "minimumInstances": 0,
+    "maximumInstances": 1,
+    "containerConcurrency": 20,
+    "requestTimeoutSeconds": 50,
+    "healthPath": "/api/health"
+  }
+}

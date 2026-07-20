@@ -2,15 +2,16 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import styles from './ChatUI.module.css';
 
 interface ChatUIProps {
   onSubmit: (prompt: string) => void;
   isLoading: boolean;
+  errorMessage: string | null;
 }
 
-export default function ChatUI({ onSubmit, isLoading }: ChatUIProps) {
+export default function ChatUI({ onSubmit, isLoading, errorMessage }: ChatUIProps) {
   const [input, setInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,7 +43,7 @@ export default function ChatUI({ onSubmit, isLoading }: ChatUIProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          Describe what you want to build. We'll architect the perfect 2026 stack.
+          Describe what you want to build. We&apos;ll architect the perfect 2026 stack.
         </motion.p>
       </div>
 
@@ -60,6 +61,9 @@ export default function ChatUI({ onSubmit, isLoading }: ChatUIProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isLoading}
+          maxLength={2000}
+          aria-invalid={Boolean(errorMessage)}
+          aria-describedby={errorMessage ? "architecture-error" : undefined}
         />
         <button 
           type="submit" 
@@ -73,6 +77,11 @@ export default function ChatUI({ onSubmit, isLoading }: ChatUIProps) {
           )}
         </button>
       </motion.form>
+      {errorMessage && (
+        <p className={styles.error} id="architecture-error" role="alert">
+          {errorMessage}
+        </p>
+      )}
     </motion.div>
   );
 }

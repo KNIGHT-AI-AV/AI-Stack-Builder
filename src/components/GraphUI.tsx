@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { ReactFlow, Background, Controls, Handle, Position, MarkerType, Edge, Node as ReactFlowNode } from '@xyflow/react';
 import { motion } from 'framer-motion';
 import styles from './GraphUI.module.css';
+import type { StackGraphEdge, StackGraphNode, StackGraphNodeData } from '@/lib/graph';
 
-interface NodeData {
-  label: string;
-  category: string;
-  description: string;
+interface NodeData extends StackGraphNodeData {
   metrics?: {
     elo?: number;
     price?: number;
@@ -38,19 +36,12 @@ const nodeTypes = {
 };
 
 interface GraphUIProps {
-  nodesData: any[];
-  edgesData: any[];
+  nodesData: StackGraphNode[];
+  edgesData: StackGraphEdge[];
 }
 
 export default function GraphUI({ nodesData, edgesData }: GraphUIProps) {
-  const [nodes, setNodes] = useState<ReactFlowNode[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
-
-  useEffect(() => {
-    if (!nodesData || nodesData.length === 0) return;
-
-    // Simple vertical layout algorithm
-    const layoutedNodes = nodesData.map((node, index) => {
+  const nodes = useMemo<ReactFlowNode[]>(() => nodesData.map((node, index) => {
       // Space them out vertically, center horizontally
       const x = 250; 
       const y = index * 200 + 50; 
@@ -61,9 +52,9 @@ export default function GraphUI({ nodesData, edgesData }: GraphUIProps) {
         position: { x, y },
         data: node.data,
       };
-    });
+    }), [nodesData]);
 
-    const formattedEdges = edgesData.map((edge) => ({
+  const edges = useMemo<Edge[]>(() => edgesData.map((edge) => ({
       id: edge.id,
       source: edge.source,
       target: edge.target,
@@ -76,11 +67,7 @@ export default function GraphUI({ nodesData, edgesData }: GraphUIProps) {
         type: MarkerType.ArrowClosed,
         color: 'var(--red)',
       },
-    }));
-
-    setNodes(layoutedNodes);
-    setEdges(formattedEdges);
-  }, [nodesData, edgesData]);
+    })), [edgesData]);
 
   if (!nodesData || nodesData.length === 0) {
     return (
