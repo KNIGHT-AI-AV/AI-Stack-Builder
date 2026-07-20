@@ -12,7 +12,7 @@
   },
   "cloudRun": {
     "service": "ai-stack-builder-api",
-    "imageRepository": "us-central1-docker.pkg.dev/knight-ai-av-site/knight/ai-stack-builder-api",
+    "imageRepository": "us-central1-docker.pkg.dev/knight-ai-av-site/knight-runtime/ai-stack-builder-api",
     "runtimeServiceAccount": "ai-stack-builder-runtime@knight-ai-av-site.iam.gserviceaccount.com",
     "ingress": "all",
     "minimumInstances": 0,
