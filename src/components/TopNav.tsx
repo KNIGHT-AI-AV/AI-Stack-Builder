@@ -10,15 +10,20 @@ export default function TopNav() {
       <div className={styles.navContent}>
         <Link href="/" className={styles.brand}>
           <Image
-            src="/assets/media/knight-helm-gold-192.webp"
-            alt="Knight AI+AV Mark"
+            src="/assets/brand/icons/ai-stack-builder-icon-192.png"
+            alt=""
+            aria-hidden="true"
             className={styles.brandMark}
             width={192}
             height={192}
+            preload
             unoptimized
           />
-          <span className={styles.brandWordmark}>
-            KNIGHT <span className={styles.brandAccent}>AI+AV</span>
+          <span className={styles.brandType}>
+            <span className={styles.brandWordmark}>
+              AI STACK <span className={styles.brandAccent}>BUILDER</span>
+            </span>
+            <span className={styles.brandParent}>BY KNIGHT AI+AV</span>
           </span>
         </Link>
         <div className={styles.navRow}>

@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "build:firebase": "npm run build && node scripts/build-firebase.mjs",
+    "brand:build": "python scripts/build-brand-assets.py",
+    "brand:check": "python scripts/build-brand-assets.py --check",
     "render:google": "node scripts/render-cloud-run-service.mjs",
     "start": "next start",
     "start:standalone": "node .next/standalone/server.js",
@@ -13,7 +15,7 @@
     "test": "tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "verify:deployment": "node scripts/verify-deployment.mjs",
-    "verify": "npm run lint && npm run typecheck && npm test && npm run build:firebase && npm run verify:deployment"
+    "verify": "npm run brand:check && npm run lint && npm run typecheck && npm test && npm run build:firebase && npm run verify:deployment"
   },
   "dependencies": {
     "@xyflow/react": "^12.10.2",

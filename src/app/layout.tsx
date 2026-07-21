@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import TopNav from "@/components/TopNav";
 import CustomCursor from "@/components/CustomCursor";
@@ -7,6 +7,21 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: "AI Stack Builder | Knight AI+AV",
   description: "Architect AI infrastructure with natural language prompts.",
+  applicationName: "AI Stack Builder",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "AI Stack Builder",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "dark",
+  themeColor: "#08080a",
 };
 
 export default function RootLayout({

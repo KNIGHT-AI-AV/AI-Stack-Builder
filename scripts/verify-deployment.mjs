@@ -65,8 +65,22 @@ assert(manifest.hostingSite === target.hosting.site, "Firebase artifact belongs 
 assert(manifest.fileCount === manifest.files.length, "Firebase artifact file count is inconsistent.");
 assert(manifest.fileCount > 3, "Firebase artifact is unexpectedly small.");
 assert(manifest.files.some((entry) => entry.path === "index.html"), "Firebase artifact has no index.html.");
+for (const requiredBrandFile of ["favicon.ico", "icon.png", "apple-icon.png", "manifest.webmanifest"]) {
+  assert(manifest.files.some((entry) => entry.path === requiredBrandFile), `Firebase artifact has no ${requiredBrandFile}.`);
+}
 assert(manifest.files.some((entry) => entry.path.startsWith("_next/static/") && entry.path.endsWith(".js")), "Firebase artifact has no Next.js client chunks.");
 assert(manifest.files.some((entry) => entry.path.startsWith("assets/")), "Firebase artifact has no product assets.");
+
+const staticHtml = await readText("firebase-dist/index.html");
+assert(!staticHtml.includes("/_next/image"), "Firebase static HTML depends on the unavailable Next image optimizer.");
+const webManifest = await readJson("firebase-dist/manifest.webmanifest");
+assert(webManifest.name === "AI Stack Builder by Knight AI+AV", "Web manifest has the wrong product name.");
+assert(webManifest.icons.length === 4, "Web manifest must declare both any-purpose and maskable PWA icons.");
+for (const icon of webManifest.icons) {
+  assert(icon.src.startsWith("/assets/brand/icons/"), `Web manifest contains an unexpected icon path: ${icon.src}`);
+  const relativeIcon = icon.src.slice(1);
+  assert(manifest.files.some((entry) => entry.path === relativeIcon), `Firebase artifact is missing manifest icon ${relativeIcon}.`);
+}
 
 const actualFiles = (await collectFiles(path.join(projectRoot, "firebase-dist")))
   .filter((file) => path.basename(file) !== ".deployment-manifest.json");

@@ -10,6 +10,9 @@ const sourceHtml = path.join(nextDirectory, "server", "app", "index.html");
 const sourceStatic = path.join(nextDirectory, "static");
 const sourceAssets = path.join(projectRoot, "public", "assets");
 const sourceFavicon = path.join(projectRoot, "src", "app", "favicon.ico");
+const sourceIcon = path.join(nextDirectory, "server", "app", "icon.png.body");
+const sourceAppleIcon = path.join(nextDirectory, "server", "app", "apple-icon.png.body");
+const sourceWebManifest = path.join(nextDirectory, "server", "app", "manifest.webmanifest.body");
 
 if (path.dirname(outputDirectory) !== projectRoot || path.basename(outputDirectory) !== "firebase-dist") {
   throw new Error("Refusing to replace an unexpected Firebase artifact path.");
@@ -19,6 +22,9 @@ await requireFile(sourceHtml, "Run `npm run build` before building the Firebase 
 await requireDirectory(sourceStatic, "The Next.js static chunk directory is missing.");
 await requireDirectory(sourceAssets, "The reviewed public asset directory is missing.");
 await requireFile(sourceFavicon, "The product favicon is missing.");
+await requireFile(sourceIcon, "The built Next app icon is missing.");
+await requireFile(sourceAppleIcon, "The built Next Apple icon is missing.");
+await requireFile(sourceWebManifest, "The built web manifest is missing.");
 
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(path.join(outputDirectory, "_next"), { recursive: true });
@@ -26,6 +32,9 @@ await cp(sourceHtml, path.join(outputDirectory, "index.html"));
 await cp(sourceStatic, path.join(outputDirectory, "_next", "static"), { recursive: true });
 await cp(sourceAssets, path.join(outputDirectory, "assets"), { recursive: true });
 await cp(sourceFavicon, path.join(outputDirectory, "favicon.ico"));
+await cp(sourceIcon, path.join(outputDirectory, "icon.png"));
+await cp(sourceAppleIcon, path.join(outputDirectory, "apple-icon.png"));
+await cp(sourceWebManifest, path.join(outputDirectory, "manifest.webmanifest"));
 
 const files = await collectFiles(outputDirectory);
 await assertClientArtifactIsSecretFree(files);

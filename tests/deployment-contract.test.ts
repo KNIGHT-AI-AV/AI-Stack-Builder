@@ -71,3 +71,19 @@ test("server routes contain hardening controls and client code contains no provi
   assert(!clientText.includes("ARTIFICIAL_ANALYSIS_API_KEY"));
   assert(!/NEXT_PUBLIC_[A-Z0-9_]*(?:KEY|SECRET|TOKEN)/i.test(clientText));
 });
+
+test("Firebase artifact assembly includes the generated product identity without an image optimizer dependency", async () => {
+  const builder = await readText("scripts/build-firebase.mjs");
+  const layout = await readText("src/app/layout.tsx");
+  const topNav = await readText("src/components/TopNav.tsx");
+  const chat = await readText("src/components/ChatUI.tsx");
+
+  for (const expected of ["icon.png", "apple-icon.png", "manifest.webmanifest"]) {
+    assert(builder.includes(expected), `Firebase builder does not include ${expected}.`);
+  }
+  assert(layout.includes('manifest: "/manifest.webmanifest"'));
+  assert(topNav.includes("ai-stack-builder-icon-192.png"));
+  assert(chat.includes("ai-stack-builder-icon-192.png"));
+  assert(topNav.includes("unoptimized"));
+  assert(chat.includes("unoptimized"));
+});

@@ -25,7 +25,19 @@ npm run verify
 docker.exe build --pull=false --tag ai-stack-builder-api:local .
 ```
 
-`npm run verify` runs lint, type checking, unit/contract tests, the production Next build, Firebase artifact assembly, and manifest/hash/security verification. See [infra/google/README.md](infra/google/README.md) for the immutable release-rendering contract and the actions that remain intentionally outside local preparation.
+`npm run verify` checks the generated-brand contract, lint, type checking, unit/contract tests, the production Next build, Firebase artifact assembly, and manifest/hash/security verification. See [infra/google/README.md](infra/google/README.md) for the immutable release-rendering contract and the actions that remain intentionally outside local preparation.
+
+## Brand identity
+
+The AI Stack Builder mark was generated with the image model, cleaned to a true-alpha master, and deterministically derived into web, PWA, favicon, and opaque Apple/iOS assets. The untouched source, exact prompt, hashes, and cleanup method are recorded in [the generation receipt](public/assets/brand/generation-receipt.md).
+
+```powershell
+python -m pip install -r scripts/requirements-brand.txt
+npm run brand:build
+npm run brand:check
+```
+
+Firebase Hosting receives the manifest, framework icons, and direct raster assets in the immutable static artifact. UI images are deliberately unoptimized so the static surface never depends on a Next image-optimization route.
 
 ## Runtime configuration
 

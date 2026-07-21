@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import styles from './ChatUI.module.css';
@@ -29,6 +30,23 @@ export default function ChatUI({ onSubmit, isLoading, errorMessage }: ChatUIProp
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className={styles.header}>
+        <motion.div
+          className={styles.heroBrand}
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.65, ease: "easeOut" }}
+        >
+          <Image
+            src="/assets/brand/icons/ai-stack-builder-icon-192.png"
+            alt=""
+            aria-hidden="true"
+            width={192}
+            height={192}
+            className={styles.heroMark}
+            unoptimized
+          />
+          <span className={styles.eyebrow}>KNIGHT AI+AV / ARCHITECTURE INTELLIGENCE</span>
+        </motion.div>
         <motion.h1 
           className={styles.title}
           initial={{ opacity: 0 }}
