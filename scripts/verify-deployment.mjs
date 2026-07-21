@@ -22,13 +22,13 @@ assert(packageJson.overrides.postcss === "8.5.10", "The reviewed PostCSS overrid
 assert(nextConfig.includes('output: "standalone"'), "Next standalone output is required for Cloud Run.");
 assert(nextConfig.includes("root: process.cwd()"), "The Turbopack root must be pinned to this project.");
 
-assert(firebaseRc.projects.default === target.projectId, "Firebase project and Google target disagree.");
+assert(firebaseRc.projects.default === target.hostingProjectId, "Firebase Hosting project and target disagree.");
+assert(target.runtimeProjectId === "knight-control-20260719", "Cloud Run is not assigned to the consolidated runtime project.");
 assert(firebase.hosting.site === target.hosting.site, "Firebase Hosting site and Google target disagree.");
 assert(firebase.hosting.public === target.hosting.publicDirectory, "Firebase public directory and target disagree.");
-const apiRewrite = firebase.hosting.rewrites.find((rewrite) => rewrite.source === target.hosting.apiRewrite);
-assert(apiRewrite?.run?.serviceId === target.cloudRun.service, "Firebase API rewrite has the wrong Cloud Run service.");
-assert(apiRewrite?.run?.region === target.region, "Firebase API rewrite has the wrong region.");
-assert(apiRewrite?.run?.pinTag === true, "Firebase API rewrite must pin the Cloud Run revision tag.");
+assert(firebase.hosting.rewrites.length === 1 && firebase.hosting.rewrites[0].destination === "/index.html", "Firebase Hosting must stay static without a cross-project Cloud Run rewrite.");
+assert(target.hosting.apiBaseUrl === environment.plainEnvironment.NEXT_PUBLIC_AI_STACK_API_BASE_URL, "Client API origin and runtime contract disagree.");
+assert(!("PORT" in environment.plainEnvironment), "Cloud Run reserves PORT and it must not be supplied explicitly.");
 
 assert(target.cloudRun.minimumInstances === 0, "Cloud Run minimum instances must remain zero.");
 assert(target.cloudRun.maximumInstances === 1, "Cloud Run maximum instances must remain one until distributed limits/cache exist.");
@@ -98,6 +98,10 @@ for (const entry of manifest.files) {
 assert(actualBytes === manifest.totalBytes, "Firebase artifact byte total is inconsistent.");
 
 const clientText = await collectClientText(path.join(projectRoot, "firebase-dist"));
+assert(
+  clientText.includes(target.hosting.apiBaseUrl),
+  "Firebase client artifact does not contain the reviewed direct Cloud Run API origin.",
+);
 for (const pattern of [/OPENROUTER_API_KEY/i, /ARTIFICIAL_ANALYSIS_API_KEY/i, /NEXT_PUBLIC_[A-Z0-9_]*(?:KEY|SECRET|TOKEN)/i, /\bsk-or-v1-[A-Za-z0-9_-]{12,}/]) {
   assert(!pattern.test(clientText), `Firebase client artifact matched forbidden pattern ${pattern}.`);
 }
@@ -105,7 +109,8 @@ for (const pattern of [/OPENROUTER_API_KEY/i, /ARTIFICIAL_ANALYSIS_API_KEY/i, /N
 console.log(JSON.stringify({
   status: "verified",
   product: target.product,
-  projectId: target.projectId,
+  hostingProjectId: target.hostingProjectId,
+  runtimeProjectId: target.runtimeProjectId,
   hostingSite: target.hosting.site,
   cloudRunService: target.cloudRun.service,
   minimumInstances: target.cloudRun.minimumInstances,

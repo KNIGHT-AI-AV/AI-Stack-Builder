@@ -23,7 +23,7 @@ spec:
         run.googleapis.com/cpu-throttling: "true"
         run.googleapis.com/startup-cpu-boost: "true"
     spec:
-      serviceAccountName: ai-stack-builder-runtime@knight-ai-av-site.iam.gserviceaccount.com
+      serviceAccountName: ai-stack-builder-runtime@knight-control-20260719.iam.gserviceaccount.com
       containerConcurrency: 20
       timeoutSeconds: 50
       containers:
@@ -39,8 +39,6 @@ spec:
               value: "1"
             - name: HOSTNAME
               value: "0.0.0.0"
-            - name: PORT
-              value: "8080"
             - name: AI_STACK_PUBLIC_URL
               value: "https://knight-ai-stack-builder.web.app"
             - name: AI_STACK_ALLOWED_ORIGINS
@@ -92,6 +90,3 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 30
             failureThreshold: 3
-  traffic:
-    - percent: 100
-      latestRevision: true

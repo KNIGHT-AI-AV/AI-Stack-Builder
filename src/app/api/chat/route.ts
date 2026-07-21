@@ -5,9 +5,10 @@ import {
   ConcurrencyGate,
   FixedWindowRateLimiter,
   apiErrorResponse,
-  assertAllowedOrigin,
   assertRateLimit,
   createRequestId,
+  corsPreflightResponse,
+  corsResponseHeaders,
   fetchWithTimeout,
   getBoundedInteger,
   getClientRateLimitKey,
@@ -22,6 +23,10 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+export function OPTIONS(request: Request) {
+  return corsPreflightResponse(request, ["POST", "OPTIONS"]);
+}
 
 const requestLimit = new FixedWindowRateLimiter(
   getBoundedInteger("AI_STACK_CHAT_RATE_LIMIT", 10, 1, 120),
@@ -50,8 +55,9 @@ Rules:
 export async function POST(request: Request) {
   const startedAt = Date.now();
   const requestId = createRequestId();
+  let corsHeaders: HeadersInit = {};
   try {
-    assertAllowedOrigin(request);
+    corsHeaders = corsResponseHeaders(request);
     const rate = requestLimit.check(getClientRateLimitKey(request));
     assertRateLimit(rate);
 
@@ -114,11 +120,14 @@ export async function POST(request: Request) {
         nodeCount: graph.nodes.length,
         edgeCount: graph.edges.length,
       });
-      return jsonApiResponse(graph, 200, requestId, rateLimitHeaders(rate));
+      return jsonApiResponse(graph, 200, requestId, {
+        ...rateLimitHeaders(rate),
+        ...Object.fromEntries(new Headers(corsHeaders)),
+      });
     } finally {
       release();
     }
   } catch (error) {
-    return apiErrorResponse(error, requestId, "/api/chat", startedAt);
+    return apiErrorResponse(error, requestId, "/api/chat", startedAt, corsHeaders);
   }
 }

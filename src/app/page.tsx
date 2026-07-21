@@ -14,6 +14,7 @@ interface ApiErrorPayload {
 }
 
 const FALLBACK_ERROR = 'The architecture service could not complete this request.';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_AI_STACK_API_BASE_URL || '').replace(/\/+$/, '');
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function Home() {
     setActivePrompt(prompt);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),

@@ -4,9 +4,10 @@ import {
   ApiError,
   FixedWindowRateLimiter,
   apiErrorResponse,
-  assertAllowedOrigin,
   assertRateLimit,
   createRequestId,
+  corsPreflightResponse,
+  corsResponseHeaders,
   fetchWithTimeout,
   getBoundedInteger,
   getClientRateLimitKey,
@@ -20,6 +21,10 @@ import {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+export function OPTIONS(request: Request) {
+  return corsPreflightResponse(request, ["GET", "OPTIONS"]);
+}
 
 type MetricsType = "llms" | "image";
 
@@ -40,8 +45,9 @@ const endpoints: Record<MetricsType, string> = {
 export async function GET(request: Request) {
   const startedAt = Date.now();
   const requestId = createRequestId();
+  let corsHeaders: HeadersInit = {};
   try {
-    assertAllowedOrigin(request);
+    corsHeaders = corsResponseHeaders(request);
     const rate = requestLimit.check(getClientRateLimitKey(request));
     assertRateLimit(rate);
     const type = parseMetricsType(request.url);
@@ -76,6 +82,7 @@ export async function GET(request: Request) {
       "X-Content-Type-Options": "nosniff",
       "X-Request-Id": requestId,
     });
+    new Headers(corsHeaders).forEach((value, key) => headers.set(key, value));
 
     if (request.headers.get("if-none-match") === entry.etag) {
       return new Response(null, { status: 304, headers });
@@ -90,7 +97,7 @@ export async function GET(request: Request) {
     });
     return new Response(entry.body, { status: 200, headers });
   } catch (error) {
-    return apiErrorResponse(error, requestId, "/api/metrics", startedAt);
+    return apiErrorResponse(error, requestId, "/api/metrics", startedAt, corsHeaders);
   }
 }
 

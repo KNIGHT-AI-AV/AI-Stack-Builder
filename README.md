@@ -6,8 +6,9 @@ AI Stack Builder turns a plain-language product idea into a validated architectu
 
 - Firebase Hosting site: `knight-ai-stack-builder`
 - Cloud Run service: `ai-stack-builder-api` in `us-central1`
-- Google Cloud project: `knight-ai-av-site`
-- Runtime service account: `ai-stack-builder-runtime@knight-ai-av-site.iam.gserviceaccount.com`
+- Google Cloud runtime project: `knight-control-20260719`
+- Firebase Hosting project: `knight-ai-av-site`
+- Runtime service account: `ai-stack-builder-runtime@knight-control-20260719.iam.gserviceaccount.com`
 - Cost posture: zero minimum instances, one maximum instance, one CPU, 512 MiB, and a 50-second request timeout
 - Secrets: numeric, pinned Secret Manager versions; never client variables or image build arguments
 

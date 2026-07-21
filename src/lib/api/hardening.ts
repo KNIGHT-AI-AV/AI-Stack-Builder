@@ -161,6 +161,22 @@ export function assertAllowedOrigin(request: Request) {
   }
 }
 
+export function corsResponseHeaders(request: Request) {
+  assertAllowedOrigin(request);
+  const headers = new Headers({ Vary: "Origin" });
+  const origin = request.headers.get("origin");
+  if (origin) headers.set("Access-Control-Allow-Origin", new URL(origin).origin);
+  return headers;
+}
+
+export function corsPreflightResponse(request: Request, methods: readonly string[]) {
+  const headers = corsResponseHeaders(request);
+  headers.set("Access-Control-Allow-Methods", methods.join(", "));
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+  headers.set("Access-Control-Max-Age", "600");
+  return new Response(null, { status: 204, headers });
+}
+
 export function getClientRateLimitKey(request: Request) {
   const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
   const direct = request.headers.get("x-real-ip")?.trim();
@@ -347,7 +363,13 @@ export function jsonApiResponse(
   return Response.json(payload, { status, headers });
 }
 
-export function apiErrorResponse(error: unknown, requestId: string, route: string, startedAt: number) {
+export function apiErrorResponse(
+  error: unknown,
+  requestId: string,
+  route: string,
+  startedAt: number,
+  extraHeaders: HeadersInit = {},
+) {
   const apiError = error instanceof ApiError
     ? error
     : error instanceof ConfigurationError
@@ -362,11 +384,13 @@ export function apiErrorResponse(error: unknown, requestId: string, route: strin
     durationMs: Math.max(0, Date.now() - startedAt),
   });
 
+  const headers = new Headers(apiError.headers);
+  new Headers(extraHeaders).forEach((value, key) => headers.set(key, value));
   return jsonApiResponse(
     { error: { code: apiError.code, message: apiError.message }, requestId },
     apiError.status,
     requestId,
-    apiError.headers,
+    headers,
   );
 }
 

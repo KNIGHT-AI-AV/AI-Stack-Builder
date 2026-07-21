@@ -36,7 +36,8 @@ await writeFile(outputPath, rendered, "utf8");
 const receipt = {
   schemaVersion: 1,
   product: target.product,
-  projectId: target.projectId,
+  runtimeProjectId: target.runtimeProjectId,
+  hostingProjectId: target.hostingProjectId,
   region: target.region,
   service: target.cloudRun.service,
   imageUri,

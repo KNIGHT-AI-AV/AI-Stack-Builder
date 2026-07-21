@@ -8,16 +8,15 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const readText = (relativePath: string) => readFile(path.join(projectRoot, relativePath), "utf8");
 const readJson = async (relativePath: string) => JSON.parse(await readText(relativePath));
 
-test("Firebase Hosting sends only APIs to the intended Cloud Run service", async () => {
+test("Firebase Hosting stays static and the client targets the control-project API", async () => {
   const firebase = await readJson("firebase.json");
   const target = await readJson("infra/google/target.json");
   assert.equal(firebase.hosting.site, "knight-ai-stack-builder");
   assert.equal(firebase.hosting.public, "firebase-dist");
-  assert.deepEqual(firebase.hosting.rewrites[0], {
-    source: "/api/**",
-    run: { serviceId: "ai-stack-builder-api", region: "us-central1", pinTag: true },
-  });
-  assert.deepEqual(firebase.hosting.rewrites[1], { source: "**", destination: "/index.html" });
+  assert.deepEqual(firebase.hosting.rewrites, [{ source: "**", destination: "/index.html" }]);
+  assert.equal(target.runtimeProjectId, "knight-control-20260719");
+  assert.equal(target.hostingProjectId, "knight-ai-av-site");
+  assert.match(target.hosting.apiBaseUrl, /^https:\/\/ai-stack-builder-api-[0-9]+\.us-central1\.run\.app$/);
   assert.equal(target.cloudRun.minimumInstances, 0);
   assert.equal(target.cloudRun.maximumInstances, 1);
   assert.equal(target.cloudRun.requestTimeoutSeconds, 50);
@@ -36,7 +35,8 @@ test("secret bindings use fleet names, numeric pins, and no client variables", a
     },
   });
   assert(!Object.keys(environment.plainEnvironment).some((name) => /(?:KEY|SECRET|TOKEN)/i.test(name)));
-  assert(!Object.keys(environment.plainEnvironment).some((name) => name.startsWith("NEXT_PUBLIC_")));
+  assert.equal(environment.plainEnvironment.NEXT_PUBLIC_AI_STACK_API_BASE_URL, "https://ai-stack-builder-api-281371463065.us-central1.run.app");
+  assert.equal("PORT" in environment.plainEnvironment, false);
 });
 
 test("Cloud Run template is scale-to-zero, non-floating, and health checked", async () => {
@@ -46,13 +46,14 @@ test("Cloud Run template is scale-to-zero, non-floating, and health checked", as
   assert.match(template, /image: "{{IMAGE_URI}}"/);
   assert(!/image:\s*[^\r\n]*:latest\b/i.test(template));
   assert.equal(template.split("path: /api/health").length - 1, 2);
-  assert.match(template, /serviceAccountName: ai-stack-builder-runtime@knight-ai-av-site\.iam\.gserviceaccount\.com/);
+  assert.match(template, /serviceAccountName: ai-stack-builder-runtime@knight-control-20260719\.iam\.gserviceaccount\.com/);
+  assert.doesNotMatch(template, /^\s*traffic:/m);
 });
 
 test("server routes contain hardening controls and client code contains no provider secret names", async () => {
   const chat = await readText("src/app/api/chat/route.ts");
   const metrics = await readText("src/app/api/metrics/route.ts");
-  for (const expected of ["assertAllowedOrigin", "assertRateLimit", "readBoundedJson", "fetchWithTimeout"]) {
+  for (const expected of ["corsResponseHeaders", "assertRateLimit", "readBoundedJson", "fetchWithTimeout"]) {
     assert(chat.includes(expected), `Chat route is missing ${expected}.`);
     assert(metrics.includes(expected), `Metrics route is missing ${expected}.`);
   }

@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/ensure-safe-next-sharp.mjs",
     "build": "next build",
     "build:firebase": "npm run build && node scripts/build-firebase.mjs",
+    "audit:runtime": "node scripts/ensure-safe-next-sharp.mjs && npm audit --omit=optional --audit-level=high",
     "brand:build": "python scripts/build-brand-assets.py",
     "brand:check": "python scripts/build-brand-assets.py --check",
     "render:google": "node scripts/render-cloud-run-service.mjs",
@@ -23,7 +25,8 @@
     "lucide-react": "^1.11.0",
     "next": "16.2.10",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "sharp": "0.35.3"
   },
   "devDependencies": {
     "@types/node": "^20",

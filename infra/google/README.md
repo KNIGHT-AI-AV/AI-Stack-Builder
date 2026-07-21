@@ -1,6 +1,6 @@
 # Google release contract
 
-This directory is the reviewed, zero-Vercel production contract for AI Stack Builder. Firebase Hosting serves the prerendered web shell, and rewrites only `/api/**` to the `ai-stack-builder-api` Cloud Run service. Cloud Run scales to zero and is capped at one instance so the bounded in-memory rate limits, request coalescing, and metrics cache remain coherent while traffic is small.
+This directory is the reviewed, zero-Vercel production contract for AI Stack Builder. Firebase Hosting in `knight-ai-av-site` serves only the prerendered web shell. The browser calls the explicit `ai-stack-builder-api` origin in the consolidated `knight-control-20260719` runtime project; Firebase Hosting does not attempt an unsupported cross-project Cloud Run rewrite. Cloud Run scales to zero and is capped at one instance so the bounded in-memory rate limits, request coalescing, and metrics cache remain coherent while traffic is small.
 
 Nothing in this directory performs a deployment. Account login, billing enablement, IAM changes, Secret Manager writes, image pushes, Cloud Run replacement, Firebase promotion, and DNS changes are deliberately outside the preparation step.
 
