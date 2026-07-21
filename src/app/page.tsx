@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import ChatUI from '@/components/ChatUI';
 import GraphUI from '@/components/GraphUI';
-import { motion, AnimatePresence } from 'framer-motion';
 import type { StackGraph } from '@/lib/graph';
+import styles from './page.module.css';
 
 interface ApiErrorPayload {
   error?: {
@@ -12,15 +13,23 @@ interface ApiErrorPayload {
   };
 }
 
+const FALLBACK_ERROR = 'The architecture service could not complete this request.';
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [graphData, setGraphData] = useState<StackGraph | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activePrompt, setActivePrompt] = useState('');
+  const requestSequence = useRef(0);
+  const reduceMotion = useReducedMotion();
 
   const handleChatSubmit = async (prompt: string) => {
+    const sequence = requestSequence.current + 1;
+    requestSequence.current = sequence;
     setIsLoading(true);
     setGraphData(null);
     setErrorMessage(null);
+    setActivePrompt(prompt);
 
     try {
       const res = await fetch('/api/chat', {
@@ -31,43 +40,47 @@ export default function Home() {
 
       if (!res.ok) {
         const payload = await res.json().catch(() => null) as ApiErrorPayload | null;
-        throw new Error(payload?.error?.message || 'The architecture service could not complete this request.');
+        throw new Error(payload?.error?.message || FALLBACK_ERROR);
       }
 
       const data = await res.json() as StackGraph;
+      if (sequence !== requestSequence.current) return;
       setGraphData(data);
+      window.requestAnimationFrame(() => {
+        document.querySelector('#architecture')?.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : 'The architecture service could not complete this request.');
+      if (sequence !== requestSequence.current) return;
+      setErrorMessage(error instanceof Error ? error.message : FALLBACK_ERROR);
     } finally {
-      setIsLoading(false);
+      if (sequence === requestSequence.current) setIsLoading(false);
     }
   };
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
-      
-      {/* Spacer when no graph is present to center the chat */}
-      <motion.div 
-        animate={{ height: graphData ? '5vh' : '25vh' }} 
-        transition={{ duration: 0.6, ease: 'easeInOut' }}
-      />
-
-      <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} errorMessage={errorMessage} />
+    <main className={styles.main}>
+      <section className={styles.briefStage} aria-labelledby="builder-title">
+        <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} errorMessage={errorMessage} />
+      </section>
 
       <AnimatePresence>
         {graphData && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
+          <motion.section
+            id="architecture"
+            className={styles.resultStage}
+            aria-labelledby="architecture-title"
+            initial={reduceMotion ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-            style={{ width: '100%', maxWidth: '1200px' }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+            transition={{ duration: reduceMotion ? 0 : 0.5, ease: 'easeOut' }}
           >
-            <GraphUI nodesData={graphData.nodes} edgesData={graphData.edges} />
-          </motion.div>
+            <GraphUI graph={graphData} prompt={activePrompt} />
+          </motion.section>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

@@ -98,6 +98,11 @@ body {
   z-index: 10000;
   will-change: transform;
   transform: translate3d(0, 0, 0);
+  opacity: 0;
+}
+
+.cursor.ready {
+  opacity: 1;
 }
 
 .gold-cursor-img {
@@ -318,4 +323,18 @@ a {
   color: #fff;
   box-shadow: 0 0 18px rgba(228, 18, 28, 0.45);
   transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

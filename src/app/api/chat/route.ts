@@ -36,13 +36,15 @@ Use this AI ecosystem catalog as the primary candidate set:
 ${ecosystem}
 
 Return only one JSON object with exactly this shape:
-{"nodes":[{"id":"node_1","type":"tool","data":{"label":"Tool","category":"Category","description":"Short description"}}],"edges":[{"id":"edge_1","source":"node_1","target":"node_2","label":"uses"}]}
+{"nodes":[{"id":"node_1","type":"tool","data":{"label":"Tool","category":"Category","description":"Short description","rationale":"Why this tool fits the brief","tradeoff":"Main limitation or operational cost"}}],"edges":[{"id":"edge_1","source":"node_1","target":"node_2","label":"uses"}]}
 
 Rules:
 - Include 4 to 8 unique nodes and 1 to 16 edges.
+- Every node must participate in one connected architecture graph.
 - Every node type is "tool".
 - Every edge references nodes in the response and may not point to itself.
-- Keep labels, categories, descriptions, and edge labels concise.
+- Give every recommendation one brief, specific rationale and one honest tradeoff.
+- Keep labels, categories, descriptions, rationales, tradeoffs, and edge labels concise.
 - Do not include markdown, commentary, credentials, or fields outside the schema.`;
 
 export async function POST(request: Request) {

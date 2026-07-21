@@ -2,6 +2,8 @@ export interface StackGraphNodeData extends Record<string, unknown> {
   label: string;
   category: string;
   description: string;
+  rationale: string;
+  tradeoff: string;
 }
 
 export interface StackGraphNode {

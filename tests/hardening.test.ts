@@ -80,6 +80,14 @@ test("JSON body reader enforces media type, declared size, actual size, and obje
     }), 20),
     hasApiError(400, "invalid_payload"),
   );
+  await assert.rejects(
+    readJsonObject(new Request("https://example.test", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: new Uint8Array([0xc3, 0x28]),
+    }), 20),
+    hasApiError(400, "invalid_json"),
+  );
   assert.deepEqual(await readJsonObject(new Request("https://example.test", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },

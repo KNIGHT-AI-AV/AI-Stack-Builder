@@ -202,10 +202,13 @@ export async function readJsonObject(request: Request, maximumBytes: number): Pr
     }
   }
 
-  const text = await request.text();
-  if (new TextEncoder().encode(text).byteLength > maximumBytes) {
-    throw new ApiError(413, "payload_too_large", "Request payload is too large.");
-  }
+  if (!request.body) throw new ApiError(400, "invalid_json", "A JSON object is required.");
+  const bytes = await readBoundedBytes(
+    request.body,
+    maximumBytes,
+    () => new ApiError(413, "payload_too_large", "Request payload is too large."),
+  );
+  const text = decodeUtf8(bytes, new ApiError(400, "invalid_json", "Request body is not valid UTF-8 JSON."));
   if (!text.trim()) throw new ApiError(400, "invalid_json", "A JSON object is required.");
 
   let parsed: unknown;
@@ -266,7 +269,26 @@ export async function readBoundedJson(response: Response, maximumBytes: number):
   }
 
   if (!response.body) throw new ApiError(502, "invalid_upstream_response", "The provider returned an empty response.");
-  const reader = response.body.getReader();
+  const bytes = await readBoundedBytes(
+    response.body,
+    maximumBytes,
+    () => new ApiError(502, "upstream_payload_too_large", "The provider response exceeded the allowed size."),
+  );
+  const text = decodeUtf8(bytes, new ApiError(502, "invalid_upstream_response", "The provider returned invalid text encoding."));
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new ApiError(502, "invalid_upstream_response", "The provider returned invalid JSON.");
+  }
+}
+
+async function readBoundedBytes(
+  stream: ReadableStream<Uint8Array>,
+  maximumBytes: number,
+  tooLarge: () => ApiError,
+) {
+  const reader = stream.getReader();
   const chunks: Uint8Array[] = [];
   let total = 0;
   try {
@@ -275,8 +297,8 @@ export async function readBoundedJson(response: Response, maximumBytes: number):
       if (done) break;
       total += value.byteLength;
       if (total > maximumBytes) {
-        await reader.cancel();
-        throw new ApiError(502, "upstream_payload_too_large", "The provider response exceeded the allowed size.");
+        await reader.cancel().catch(() => undefined);
+        throw tooLarge();
       }
       chunks.push(value);
     }
@@ -290,18 +312,14 @@ export async function readBoundedJson(response: Response, maximumBytes: number):
     bytes.set(chunk, offset);
     offset += chunk.byteLength;
   }
+  return bytes;
+}
 
-  let text: string;
+function decodeUtf8(bytes: Uint8Array, error: ApiError) {
   try {
-    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
   } catch {
-    throw new ApiError(502, "invalid_upstream_response", "The provider returned invalid text encoding.");
-  }
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    throw new ApiError(502, "invalid_upstream_response", "The provider returned invalid JSON.");
+    throw error;
   }
 }
 

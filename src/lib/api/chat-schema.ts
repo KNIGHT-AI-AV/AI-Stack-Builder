@@ -48,7 +48,28 @@ export function validateStackGraph(value: unknown): StackGraph {
   const edges = value.edges.map((edge) => validateEdge(edge, nodeIds));
   const edgeIds = new Set(edges.map((edge) => edge.id));
   if (edgeIds.size !== edges.length) throw invalidGraph();
+  assertConnected(nodes, edges);
   return { nodes, edges };
+}
+
+function assertConnected(nodes: StackGraphNode[], edges: StackGraphEdge[]) {
+  const adjacency = new Map(nodes.map((node) => [node.id, [] as string[]]));
+  for (const edge of edges) {
+    adjacency.get(edge.source)?.push(edge.target);
+    adjacency.get(edge.target)?.push(edge.source);
+  }
+
+  const visited = new Set<string>();
+  const queue = [nodes[0].id];
+  for (let cursor = 0; cursor < queue.length; cursor += 1) {
+    const nodeId = queue[cursor];
+    if (visited.has(nodeId)) continue;
+    visited.add(nodeId);
+    for (const neighbor of adjacency.get(nodeId) ?? []) {
+      if (!visited.has(neighbor)) queue.push(neighbor);
+    }
+  }
+  if (visited.size !== nodes.length) throw invalidGraph();
 }
 
 function validateNode(value: unknown): StackGraphNode {
@@ -57,11 +78,13 @@ function validateNode(value: unknown): StackGraphNode {
   if (typeof value.id !== "string" || !IDENTIFIER.test(value.id) || value.type !== "tool" || !isPlainObject(value.data)) {
     throw invalidGraph();
   }
-  assertGraphKeys(value.data, ["label", "category", "description"]);
+  assertGraphKeys(value.data, ["label", "category", "description", "rationale", "tradeoff"]);
   const label = boundedText(value.data.label, 1, 80);
   const category = boundedText(value.data.category, 1, 60);
   const description = boundedText(value.data.description, 1, 240);
-  return { id: value.id, type: "tool", data: { label, category, description } };
+  const rationale = boundedText(value.data.rationale, 1, 220);
+  const tradeoff = boundedText(value.data.tradeoff, 1, 220);
+  return { id: value.id, type: "tool", data: { label, category, description, rationale, tradeoff } };
 }
 
 function validateEdge(value: unknown, nodeIds: Set<string>): StackGraphEdge {
