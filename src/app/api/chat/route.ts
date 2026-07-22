@@ -1,89 +1,133 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import ecosystemData from "@/data/ecosystem.json";
+import { extractOpenRouterGraph, validateChatPayload } from "@/lib/api/chat-schema";
+import {
+  ApiError,
+  ConcurrencyGate,
+  FixedWindowRateLimiter,
+  apiErrorResponse,
+  assertRateLimit,
+  createRequestId,
+  corsPreflightResponse,
+  corsResponseHeaders,
+  fetchWithTimeout,
+  getBoundedInteger,
+  getClientRateLimitKey,
+  getRequiredSecret,
+  jsonApiResponse,
+  rateLimitHeaders,
+  readBoundedJson,
+  readJsonObject,
+  safeServerLog,
+  upstreamFailure,
+} from "@/lib/api/hardening";
 
-// Read ecosystem data once at startup
-const ecosystemPath = path.join(process.cwd(), 'src', 'data', 'ecosystem.json');
-const ecosystemData = JSON.parse(fs.readFileSync(ecosystemPath, 'utf8'));
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-export async function POST(req: Request) {
-  try {
-    const { prompt } = await req.json();
-
-    if (!prompt) {
-      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
-    }
-
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-    if (!OPENROUTER_API_KEY) {
-      return NextResponse.json({ error: 'Missing OpenRouter API Key in environment variables' }, { status: 500 });
-    }
-
-    const systemPrompt = `
-You are an expert AI software architect. The user wants to build a software application or system.
-You must map their idea into a connected node graph of the exact AI models, databases, and infrastructure tools required to build it.
-Use the following 2026 AI Ecosystem data as your primary source of tools:
-${JSON.stringify(ecosystemData, null, 2)}
-
-You must return your response ONLY as a valid JSON object matching this structure:
-{
-  "nodes": [
-    { "id": "node_id_1", "type": "tool", "data": { "label": "Name of Tool", "category": "Category Name", "description": "Short desc" } }
-  ],
-  "edges": [
-    { "id": "edge_1", "source": "node_id_1", "target": "node_id_2", "label": "connects to / uses" }
-  ]
+export function OPTIONS(request: Request) {
+  return corsPreflightResponse(request, ["POST", "OPTIONS"]);
 }
 
-Instructions for the graph:
-1. Include 4 to 8 nodes total.
-2. Group logical combinations (e.g., Frontend Host -> AI Agent -> Model -> Vector DB).
-3. The "type" of the node should be "tool".
-4. Output nothing except the raw JSON. No markdown formatting (\`\`\`json) or explanations.
-`;
+const requestLimit = new FixedWindowRateLimiter(
+  getBoundedInteger("AI_STACK_CHAT_RATE_LIMIT", 10, 1, 120),
+  60_000,
+);
+const concurrency = new ConcurrencyGate(getBoundedInteger("AI_STACK_CHAT_CONCURRENCY", 4, 1, 10));
+const ecosystem = JSON.stringify(ecosystemData);
 
-    // Minimax M2.7 on OpenRouter
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://knightaiav.com', // Optional but recommended
-        'X-Title': 'AI Stack Builder',
-      },
-      body: JSON.stringify({
-        model: 'minimax/minimax-m2.7', // Or fallback to a generic if not available, but user specified Minimax M2.7
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: prompt }
-        ],
-        temperature: 0.2,
-      })
-    });
+const systemPrompt = `You are an expert AI software architect. Map the user's idea into a connected graph of the exact models, databases, and infrastructure tools required to build it.
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('OpenRouter API Error:', errorText);
-      return NextResponse.json({ error: 'Failed to fetch from OpenRouter' }, { status: response.status });
+Use this AI ecosystem catalog as the primary candidate set:
+${ecosystem}
+
+Return only one JSON object with exactly this shape:
+{"nodes":[{"id":"node_1","type":"tool","data":{"label":"Tool","category":"Category","description":"Short description","rationale":"Why this tool fits the brief","tradeoff":"Main limitation or operational cost"}}],"edges":[{"id":"edge_1","source":"node_1","target":"node_2","label":"uses"}]}
+
+Rules:
+- Include 4 to 8 unique nodes and 1 to 16 edges.
+- Every node must participate in one connected architecture graph.
+- Every node type is "tool".
+- Every edge references nodes in the response and may not point to itself.
+- Give every recommendation one brief, specific rationale and one honest tradeoff.
+- Keep labels, categories, descriptions, rationales, tradeoffs, and edge labels concise.
+- Do not include markdown, commentary, credentials, or fields outside the schema.`;
+
+export async function POST(request: Request) {
+  const startedAt = Date.now();
+  const requestId = createRequestId();
+  let corsHeaders: HeadersInit = {};
+  try {
+    corsHeaders = corsResponseHeaders(request);
+    const rate = requestLimit.check(getClientRateLimitKey(request));
+    assertRateLimit(rate);
+
+    const release = concurrency.tryAcquire();
+    if (!release) {
+      throw new ApiError(503, "capacity_limited", "The architect is busy. Try again shortly.", { "Retry-After": "2" });
     }
 
-    const data = await response.json();
-    const resultText = data.choices[0].message.content.trim();
-    
-    // Attempt to parse the JSON. In case the model wrapped it in markdown.
-    let jsonResult;
     try {
-      // Strip markdown block if present
-      const cleanText = resultText.replace(/^```(json)?|```$/gi, '').trim();
-      jsonResult = JSON.parse(cleanText);
-    } catch (e) {
-      console.error('Failed to parse AI response as JSON:', resultText);
-      return NextResponse.json({ error: 'AI did not return valid JSON' }, { status: 500 });
-    }
+      const body = await readJsonObject(request, 8_192);
+      const prompt = validateChatPayload(body);
+      const apiKey = getRequiredSecret("OPENROUTER_API_KEY");
+      const model = process.env.AI_STACK_OPENROUTER_MODEL?.trim() || "openai/gpt-4.1-mini";
+      const timeoutMs = getBoundedInteger("AI_STACK_CHAT_TIMEOUT_MS", 25_000, 5_000, 45_000);
 
-    return NextResponse.json(jsonResult);
+      const upstream = await fetchWithTimeout(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          cache: "no-store",
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": process.env.AI_STACK_PUBLIC_URL?.trim() || "https://knight-ai-stack-builder.web.app",
+            "X-Title": "Knight AI+AV AI Stack Builder",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: prompt },
+            ],
+            temperature: 0.2,
+            max_tokens: 1_600,
+            response_format: { type: "json_object" },
+          }),
+        },
+        timeoutMs,
+        request.signal,
+      );
+
+      if (!upstream.ok) {
+        safeServerLog("warn", "provider_request_failed", {
+          requestId,
+          provider: "openrouter",
+          upstreamStatus: upstream.status,
+          durationMs: Date.now() - startedAt,
+        });
+        await upstream.body?.cancel();
+        throw upstreamFailure("The architecture provider", upstream.status, upstream.headers.get("retry-after"));
+      }
+
+      const providerPayload = await readBoundedJson(upstream, 262_144);
+      const graph = extractOpenRouterGraph(providerPayload);
+      safeServerLog("info", "api_request_completed", {
+        requestId,
+        route: "/api/chat",
+        status: 200,
+        durationMs: Date.now() - startedAt,
+        nodeCount: graph.nodes.length,
+        edgeCount: graph.edges.length,
+      });
+      return jsonApiResponse(graph, 200, requestId, {
+        ...rateLimitHeaders(rate),
+        ...Object.fromEntries(new Headers(corsHeaders)),
+      });
+    } finally {
+      release();
+    }
   } catch (error) {
-    console.error('Chat API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return apiErrorResponse(error, requestId, "/api/chat", startedAt, corsHeaders);
   }
 }

@@ -1,80 +1,87 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import ChatUI from '@/components/ChatUI';
 import GraphUI from '@/components/GraphUI';
-import { motion, AnimatePresence } from 'framer-motion';
+import type { StackGraph } from '@/lib/graph';
+import styles from './page.module.css';
+
+interface ApiErrorPayload {
+  error?: {
+    message?: string;
+  };
+}
+
+const FALLBACK_ERROR = 'The architecture service could not complete this request.';
+const API_BASE_URL = (process.env.NEXT_PUBLIC_AI_STACK_API_BASE_URL || '').replace(/\/+$/, '');
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [graphData, setGraphData] = useState<{ nodes: any[]; edges: any[] } | null>(null);
+  const [graphData, setGraphData] = useState<StackGraph | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activePrompt, setActivePrompt] = useState('');
+  const requestSequence = useRef(0);
+  const reduceMotion = useReducedMotion();
 
   const handleChatSubmit = async (prompt: string) => {
+    const sequence = requestSequence.current + 1;
+    requestSequence.current = sequence;
     setIsLoading(true);
-    setGraphData(null); // Reset graph
+    setGraphData(null);
+    setErrorMessage(null);
+    setActivePrompt(prompt);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
 
       if (!res.ok) {
-        throw new Error('Network response was not ok');
+        const payload = await res.json().catch(() => null) as ApiErrorPayload | null;
+        throw new Error(payload?.error?.message || FALLBACK_ERROR);
       }
 
-      const data = await res.json();
-      
-      // We can also trigger the metrics fetch here if needed, 
-      // but for MVP we will just render what the AI returned.
-      
-      setGraphData({
-        nodes: data.nodes || [],
-        edges: data.edges || []
+      const data = await res.json() as StackGraph;
+      if (sequence !== requestSequence.current) return;
+      setGraphData(data);
+      window.requestAnimationFrame(() => {
+        document.querySelector('#architecture')?.scrollIntoView({
+          behavior: reduceMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
       });
     } catch (error) {
-      console.error('Error generating graph:', error);
-      // Fallback dummy data if API fails locally without key just to show it works
-      setGraphData({
-        nodes: [
-          { id: '1', data: { label: 'Cursor', category: 'IDE', description: 'AI-First IDE' } },
-          { id: '2', data: { label: 'Vercel Sandbox', category: 'Hosting', description: 'Agent Runtime' } }
-        ],
-        edges: [
-          { id: 'e1-2', source: '1', target: '2', label: 'deploys to' }
-        ]
-      });
+      if (sequence !== requestSequence.current) return;
+      setErrorMessage(error instanceof Error ? error.message : FALLBACK_ERROR);
     } finally {
-      setIsLoading(false);
+      if (sequence === requestSequence.current) setIsLoading(false);
     }
   };
 
   return (
-    <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
-      
-      {/* Spacer when no graph is present to center the chat */}
-      <motion.div 
-        animate={{ height: graphData ? '5vh' : '25vh' }} 
-        transition={{ duration: 0.6, ease: 'easeInOut' }}
-      />
-
-      <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} />
+    <main className={styles.main}>
+      <section className={styles.briefStage} aria-labelledby="builder-title">
+        <ChatUI onSubmit={handleChatSubmit} isLoading={isLoading} errorMessage={errorMessage} />
+      </section>
 
       <AnimatePresence>
         {graphData && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
+          <motion.section
+            id="architecture"
+            className={styles.resultStage}
+            aria-labelledby="architecture-title"
+            initial={reduceMotion ? false : { opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
-            style={{ width: '100%', maxWidth: '1200px' }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+            transition={{ duration: reduceMotion ? 0 : 0.5, ease: 'easeOut' }}
           >
-            <GraphUI nodesData={graphData.nodes} edgesData={graphData.edges} />
-          </motion.div>
+            <GraphUI graph={graphData} prompt={activePrompt} />
+          </motion.section>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

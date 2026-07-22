@@ -1,0 +1,93 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ai-stack-builder-api
+  labels:
+    owner: knight-ai-av
+    product: ai-stack-builder
+    environment: production
+    managed_by: release-manifest
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/invoker-iam-disabled: "true"
+spec:
+  template:
+    metadata:
+      labels:
+        owner: knight-ai-av
+        product: ai-stack-builder
+        environment: production
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "1"
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/cpu-throttling: "true"
+        run.googleapis.com/startup-cpu-boost: "true"
+    spec:
+      serviceAccountName: ai-stack-builder-runtime@knight-control-20260719.iam.gserviceaccount.com
+      containerConcurrency: 20
+      timeoutSeconds: 50
+      containers:
+        - name: ai-stack-builder-api
+          image: "{{IMAGE_URI}}"
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: NEXT_TELEMETRY_DISABLED
+              value: "1"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: AI_STACK_PUBLIC_URL
+              value: "https://aistack.knightaiav.com"
+            - name: AI_STACK_ALLOWED_ORIGINS
+              value: "https://aistack.knightaiav.com,https://knight-ai-stack-builder.web.app,https://knight-ai-stack-builder.firebaseapp.com"
+            - name: AI_STACK_OPENROUTER_MODEL
+              value: "openai/gpt-4.1-mini"
+            - name: AI_STACK_CHAT_RATE_LIMIT
+              value: "10"
+            - name: AI_STACK_CHAT_CONCURRENCY
+              value: "4"
+            - name: AI_STACK_CHAT_TIMEOUT_MS
+              value: "25000"
+            - name: AI_STACK_METRICS_RATE_LIMIT
+              value: "60"
+            - name: AI_STACK_METRICS_TIMEOUT_MS
+              value: "12000"
+            - name: AI_STACK_METRICS_CACHE_SECONDS
+              value: "3600"
+            - name: AI_STACK_METRICS_STALE_SECONDS
+              value: "21600"
+            - name: AI_STACK_SOURCE_REVISION
+              value: "{{SOURCE_REVISION}}"
+            - name: OPENROUTER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-stack-builder-openrouter-api-key
+                  key: "{{OPENROUTER_SECRET_VERSION}}"
+            - name: ARTIFICIAL_ANALYSIS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-stack-builder-artificial-analysis-api-key
+                  key: "{{ARTIFICIAL_ANALYSIS_SECRET_VERSION}}"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 0
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            timeoutSeconds: 2
+            periodSeconds: 30
+            failureThreshold: 3

@@ -9,6 +9,9 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "firebase-dist/**",
+    "coverage/**",
+    "infra/google/*.generated.*",
     "out/**",
     "build/**",
     "next-env.d.ts",
