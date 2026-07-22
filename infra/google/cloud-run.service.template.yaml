@@ -40,9 +40,9 @@ spec:
             - name: HOSTNAME
               value: "0.0.0.0"
             - name: AI_STACK_PUBLIC_URL
-              value: "https://knight-ai-stack-builder.web.app"
+              value: "https://aistack.knightaiav.com"
             - name: AI_STACK_ALLOWED_ORIGINS
-              value: "https://knight-ai-stack-builder.web.app,https://knight-ai-stack-builder.firebaseapp.com"
+              value: "https://aistack.knightaiav.com,https://knight-ai-stack-builder.web.app,https://knight-ai-stack-builder.firebaseapp.com"
             - name: AI_STACK_OPENROUTER_MODEL
               value: "openai/gpt-4.1-mini"
             - name: AI_STACK_CHAT_RATE_LIMIT
