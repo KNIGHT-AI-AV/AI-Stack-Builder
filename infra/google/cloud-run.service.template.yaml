@@ -9,6 +9,7 @@ metadata:
     managed_by: release-manifest
   annotations:
     run.googleapis.com/ingress: all
+    run.googleapis.com/invoker-iam-disabled: "true"
 spec:
   template:
     metadata:

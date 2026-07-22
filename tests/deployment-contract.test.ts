@@ -56,6 +56,7 @@ test("Cloud Run template is scale-to-zero, non-floating, and health checked", as
   assert(!/image:\s*[^\r\n]*:latest\b/i.test(template));
   assert.equal(template.split("path: /api/health").length - 1, 2);
   assert.match(template, /serviceAccountName: ai-stack-builder-runtime@knight-control-20260719\.iam\.gserviceaccount\.com/);
+  assert.match(template, /run\.googleapis\.com\/invoker-iam-disabled: "true"/);
   assert.match(template, /value: "https:\/\/aistack\.knightaiav\.com"/);
   assert.match(template, /value: "https:\/\/aistack\.knightaiav\.com,https:\/\/knight-ai-stack-builder\.web\.app,https:\/\/knight-ai-stack-builder\.firebaseapp\.com"/);
   assert.doesNotMatch(template, /^\s*traffic:/m);

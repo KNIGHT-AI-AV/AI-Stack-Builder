@@ -40,6 +40,7 @@ assert(serviceTemplate.includes("timeoutSeconds: 50"), "Cloud Run request timeou
 assert(count(serviceTemplate, "path: /api/health") === 2, "Both startup and liveness probes must use /api/health.");
 assert(serviceTemplate.includes('image: "{{IMAGE_URI}}"'), "Cloud Run image must be supplied by the immutable renderer.");
 assert(!/image:\s*[^\r\n]*:latest\b/i.test(serviceTemplate), "Cloud Run image tags may not use latest.");
+assert(serviceTemplate.includes('run.googleapis.com/invoker-iam-disabled: "true"'), "Cloud Run public access must preserve the organization-compatible invoker bypass annotation.");
 assert(serviceTemplate.includes(`value: "${environment.plainEnvironment.AI_STACK_PUBLIC_URL}"`), "Cloud Run public URL and environment manifest disagree.");
 assert(serviceTemplate.includes(`value: "${environment.plainEnvironment.AI_STACK_ALLOWED_ORIGINS}"`), "Cloud Run allowed origins and environment manifest disagree.");
 
