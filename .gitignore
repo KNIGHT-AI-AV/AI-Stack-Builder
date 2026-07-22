@@ -22,6 +22,7 @@
 # production
 /build
 /firebase-dist
+/.firebase/
 
 # rendered release files contain version pins and remain local evidence
 /infra/google/cloud-run.service.generated.yaml
