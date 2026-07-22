@@ -5,6 +5,7 @@ import {
   ConcurrencyGate,
   FixedWindowRateLimiter,
   assertAllowedOrigin,
+  corsPreflightResponse,
   fetchWithTimeout,
   readBoundedJson,
   readJsonObject,
@@ -49,6 +50,23 @@ test("origin validation accepts same-origin and rejects cross-origin", () => {
     assert.equal(error.code, "origin_denied");
     return true;
   });
+});
+
+test("CORS preflight returns a bounded denial instead of an unhandled server error", () => {
+  const allowed = corsPreflightResponse(new Request("https://knight-ai-stack-builder.web.app/api/chat", {
+    method: "OPTIONS",
+    headers: { origin: "https://knight-ai-stack-builder.web.app" },
+  }), ["POST", "OPTIONS"]);
+  assert.equal(allowed.status, 204);
+  assert.equal(allowed.headers.get("access-control-allow-origin"), "https://knight-ai-stack-builder.web.app");
+
+  const denied = corsPreflightResponse(new Request("https://api.example.test/api/chat", {
+    method: "OPTIONS",
+    headers: { origin: "https://attacker.invalid" },
+  }), ["POST", "OPTIONS"]);
+  assert.equal(denied.status, 403);
+  assert.equal(denied.headers.get("access-control-allow-origin"), null);
+  assert.equal(denied.headers.get("cache-control"), "no-store");
 });
 
 test("JSON body reader enforces media type, declared size, actual size, and object shape", async () => {

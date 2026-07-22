@@ -170,7 +170,19 @@ export function corsResponseHeaders(request: Request) {
 }
 
 export function corsPreflightResponse(request: Request, methods: readonly string[]) {
-  const headers = corsResponseHeaders(request);
+  let headers: Headers;
+  try {
+    headers = corsResponseHeaders(request);
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+    return new Response(null, {
+      status: error.status,
+      headers: {
+        "Cache-Control": "no-store",
+        Vary: "Origin",
+      },
+    });
+  }
   headers.set("Access-Control-Allow-Methods", methods.join(", "));
   headers.set("Access-Control-Allow-Headers", "Content-Type");
   headers.set("Access-Control-Max-Age", "600");
