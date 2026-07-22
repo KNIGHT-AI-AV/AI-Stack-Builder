@@ -35,8 +35,17 @@ test("secret bindings use fleet names, numeric pins, and no client variables", a
     },
   });
   assert(!Object.keys(environment.plainEnvironment).some((name) => /(?:KEY|SECRET|TOKEN)/i.test(name)));
+  assert.equal(environment.plainEnvironment.AI_STACK_PUBLIC_URL, "https://aistack.knightaiav.com");
+  assert.match(environment.plainEnvironment.AI_STACK_ALLOWED_ORIGINS, /(?:^|,)https:\/\/aistack\.knightaiav\.com(?:,|$)/);
   assert.equal(environment.plainEnvironment.NEXT_PUBLIC_AI_STACK_API_BASE_URL, "https://ai-stack-builder-api-281371463065.us-central1.run.app");
   assert.equal("PORT" in environment.plainEnvironment, false);
+});
+
+test("Firebase release build injects the reviewed API origin deterministically", async () => {
+  const releaseBuilder = await readText("scripts/build-firebase-release.mjs");
+  assert.match(releaseBuilder, /environment\.manifest\.json/);
+  assert.match(releaseBuilder, /NEXT_PUBLIC_AI_STACK_API_BASE_URL/);
+  assert.match(releaseBuilder, /npm_execpath/);
 });
 
 test("Cloud Run template is scale-to-zero, non-floating, and health checked", async () => {
