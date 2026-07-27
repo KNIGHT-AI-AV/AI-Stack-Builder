@@ -122,7 +122,8 @@
     "development-freeze",
     "source-retirement-notice",
     "identifier-only-inventory",
-    "rollback-record"
+    "rollback-record",
+    "local-generated-artifact-cleanup"
   ],
   "verification": {
     "date": "2026-07-26",

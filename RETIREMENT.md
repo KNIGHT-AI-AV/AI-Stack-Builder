@@ -147,6 +147,10 @@ resource export and explicit execution approval.
   rollback identifiers without secret values.
 - The public GitHub repository description now states that the product was
   retired on 2026-07-26, and its stale Vercel homepage field is empty.
+- Ignored local verification caches (`.playwright-cli`, `output/playwright`,
+  `node_modules`, `.next`, `firebase-dist`, and temporary verifier logs) were
+  removed after their evidence was recorded. Restore them with `npm ci` and
+  `npm run verify`; no tracked source or immutable Git object was removed.
 - No provider dependency, paid resource, secret, DNS record, user data, or
   deployment was added or changed.
 
