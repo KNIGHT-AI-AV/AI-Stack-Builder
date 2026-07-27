@@ -63,7 +63,10 @@ a claim that retirement is complete.
   JSON health response for `ai-stack-builder-api` version `1.0.0`.
 - The preserved browser configuration uses
   `https://ai-stack-builder-api-281371463065.us-central1.run.app` for direct
-  Cloud Run API calls.
+  Cloud Run API calls; its `/api/health` also returned HTTP 200.
+- The stale legacy URL `https://ai-stack-builder-five.vercel.app/` returned
+  HTTP 402. It is not referenced by the preserved Google-only source and has
+  been removed from the GitHub repository homepage field.
 - `/api/health` on the custom domain and Firebase Hosting domain currently
   returns the static application shell, not the Cloud Run JSON response.
 
@@ -142,6 +145,8 @@ resource export and explicit execution approval.
   or its source configuration as current production truth.
 - This human-readable record and `retirement.manifest.json` capture immutable
   rollback identifiers without secret values.
+- The public GitHub repository description now states that the product was
+  retired on 2026-07-26, and its stale Vercel homepage field is empty.
 - No provider dependency, paid resource, secret, DNS record, user data, or
   deployment was added or changed.
 
@@ -174,6 +179,13 @@ the live runtime available indefinitely.
 | Change `aistack.knightaiav.com` | The subdomain is inside a shared zone. | Full zone export, owner DNS authorization, propagation plan, and previous-record receipt. |
 | Archive the GitHub repository | It changes collaboration and release behavior. | Land the retirement record on the default branch, confirm the final remote commits/tags, then use the verified `KNIGHT-AI-AV` account. |
 | Remove fleet-catalog references | The available local catalog checkout was stale and on an unrelated branch. | Update from the current private default branch in an isolated clean worktree, then change lifecycle to `retired` without deleting history. |
+
+GitHub metadata rollback: restore the prior description, `AI Stack Builder is a
+site where people describe what they want to build with AI, and it gives them
+the workflow stack, tools, nodes, and structure to actually build it, sir.`,
+and the prior homepage, `https://ai-stack-builder-five.vercel.app`. The
+repository remains public, unarchived, and on default branch `main`; neither
+metadata field affects source history.
 
 Current Google CLI metadata refresh is blocked by owner OAuth reauthentication.
 That blocks a fresh cloud export and makes live mutation inappropriate; it does

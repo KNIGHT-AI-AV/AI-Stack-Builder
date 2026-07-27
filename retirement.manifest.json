@@ -46,6 +46,24 @@
     "authority": "Squarespace",
     "sharedZone": "knightaiav.com"
   },
+  "github": {
+    "repository": "KNIGHT-AI-AV/AI-Stack-Builder",
+    "visibility": "public",
+    "defaultBranch": "main",
+    "archived": false,
+    "retirementBranch": "codex/ai-stack-google-cutover",
+    "metadataChange": {
+      "previousDescription": "AI Stack Builder is a site where people describe what they want to build with AI, and it gives them the workflow stack, tools, nodes, and structure to actually build it, sir.",
+      "currentDescription": "Retired 2026-07-26; source preserved for history, rollback, and extraction of generic components.",
+      "previousHomepage": "https://ai-stack-builder-five.vercel.app",
+      "currentHomepage": ""
+    }
+  },
+  "legacyVercel": {
+    "url": "https://ai-stack-builder-five.vercel.app",
+    "observedHttpStatus": 402,
+    "referencedByPreservedSource": false
+  },
   "secretIdentifiers": [
     {
       "project": "knight-control-20260719",
