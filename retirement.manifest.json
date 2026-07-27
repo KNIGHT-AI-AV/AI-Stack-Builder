@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "product": "ai-stack-builder",
+  "status": "owner-retired",
+  "decisionDate": "2026-07-26",
+  "developmentFrozen": true,
+  "deletionAuthorized": false,
+  "preservedSource": {
+    "finalProductCheckpoint": "a77407958789481136d3aae4ca5a7eba23931638",
+    "googleCutoverCheckpoint": "1c8ddb715d755388584930faa2aa0b841e2e0477",
+    "defaultBranchSnapshot": "4c027508e9a9980aff9e2d2b291d802ece2d0deb",
+    "controlRuntimeBranchHead": "ca97065d1ffe66c24e624026dbae58f87c9706fc",
+    "deployedSourceRevision": "abeac2442fd8a17ce398f11e01f6a306561b86b4"
+  },
+  "hosting": {
+    "project": "knight-ai-av-site",
+    "site": "knight-ai-stack-builder",
+    "release": "projects/knight-ai-av-site/sites/knight-ai-stack-builder/channels/live/releases/1784726080589000",
+    "version": "87fc457898afdc4a",
+    "finalizedAt": "2026-07-22T13:14:40.589Z",
+    "fileCount": 49,
+    "bytes": 5192488
+  },
+  "cloudRun": {
+    "project": "knight-control-20260719",
+    "region": "us-central1",
+    "service": "ai-stack-builder-api",
+    "observedServiceUrl": "https://ai-stack-builder-api-2wtrn4lnea-uc.a.run.app",
+    "configuredServiceUrl": "https://ai-stack-builder-api-281371463065.us-central1.run.app",
+    "readyRevision": "ai-stack-builder-api-00004-slj",
+    "imageDigest": "sha256:479acd122f45daf18bfd69138b83f89cdf11cfe6fc396cf6a9aad136bf9e9f1d",
+    "artifactPath": "us-central1-docker.pkg.dev/knight-control-20260719/knight-runtime/ai-stack-builder-api",
+    "serviceAccount": "ai-stack-builder-runtime@knight-control-20260719.iam.gserviceaccount.com",
+    "minInstances": 0,
+    "maxInstances": 1,
+    "concurrency": 20,
+    "timeoutSeconds": 50,
+    "cpu": 1,
+    "memoryMiB": 512
+  },
+  "domain": {
+    "host": "aistack.knightaiav.com",
+    "cname": "knight-ai-stack-builder.web.app",
+    "a": "199.36.158.100",
+    "aaaa": "2620:0:890::100",
+    "authority": "Squarespace",
+    "sharedZone": "knightaiav.com"
+  },
+  "secretIdentifiers": [
+    {
+      "project": "knight-control-20260719",
+      "id": "ai-stack-builder-openrouter-api-key",
+      "referencedVersion": "2",
+      "observedEnabledVersions": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "project": "knight-control-20260719",
+      "id": "ai-stack-builder-artificial-analysis-api-key",
+      "referencedVersion": "1",
+      "observedEnabledVersions": [
+        "1"
+      ]
+    }
+  ],
+  "billing": {
+    "project": "knight-control-20260719",
+    "billingAccount": "billingAccounts/01CAA1-649F01-3B288D",
+    "budgetsAreAlertsNotCaps": true,
+    "fleetMonthlyEstimateUsd": {
+      "min": 28,
+      "max": 35,
+      "attributableToProduct": false
+    },
+    "productCostDrivers": [
+      "cloud-run-execution",
+      "firebase-hosting",
+      "secret-manager",
+      "artifact-registry-storage",
+      "logging-and-egress",
+      "provider-api-usage"
+    ]
+  },
+  "sharedDependencies": [
+    "knight-control-20260719",
+    "knight-ai-av-site",
+    "knight-runtime",
+    "billingAccounts/01CAA1-649F01-3B288D",
+    "knightaiav.com-dns-zone"
+  ],
+  "dataDependenciesNotFound": [
+    "cloud-sql",
+    "firestore",
+    "cloud-storage",
+    "firebase-auth",
+    "supabase",
+    "vercel",
+    "user-accounts",
+    "customer-data"
+  ],
+  "completedActions": [
+    "development-freeze",
+    "source-retirement-notice",
+    "identifier-only-inventory",
+    "rollback-record"
+  ],
+  "verification": {
+    "date": "2026-07-26",
+    "brandFiles": 14,
+    "testsPassed": 22,
+    "testsFailed": 0,
+    "productionBuildPassed": true,
+    "firebaseArtifact": {
+      "fileCount": 47,
+      "bytes": 5936231
+    },
+    "deploymentContractPassed": true,
+    "npmAudit": {
+      "allDependencies": {
+        "critical": 0,
+        "high": 12
+      },
+      "productionDependencies": {
+        "critical": 0,
+        "high": 3,
+        "packages": [
+          "next",
+          "postcss",
+          "sharp"
+        ]
+      },
+      "automaticFixApplied": false
+    }
+  },
+  "pendingExternalActions": [
+    "firebase-retirement-page-or-site-disable",
+    "cloud-run-traffic-removal-or-service-delete",
+    "secret-version-disable-after-runtime-detach",
+    "product-service-account-retirement",
+    "product-image-retention-and-cleanup",
+    "custom-domain-change",
+    "github-default-branch-retirement-record",
+    "github-repository-archive",
+    "fleet-catalog-lifecycle-update"
+  ],
+  "prohibitedWithoutFurtherAuthorization": [
+    "delete-repository",
+    "destroy-secret-versions",
+    "change-shared-infrastructure",
+    "change-dns",
+    "delete-user-data",
+    "provision-paid-resources",
+    "claim-live-retirement"
+  ]
+}

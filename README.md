@@ -1,17 +1,23 @@
 # AI Stack Builder
 
-AI Stack Builder turns a plain-language product idea into a validated architecture graph. Its public interface is a prerendered Next.js 16 application; its two server-only routes call OpenRouter for graph generation and Artificial Analysis for current model metrics.
+> **Retired 2026-07-26.** The owner has classified AI Stack Builder as a
+> throwaway project. Product development, promotion, and release work are
+> frozen. This repository is retained only for Git history, reproducibility,
+> rollback, and extraction of genuinely generic components. See
+> [RETIREMENT.md](RETIREMENT.md) and
+> [retirement.manifest.json](retirement.manifest.json).
 
-## Production architecture
+The preserved application turns a plain-language product idea into a validated
+architecture graph. Its public interface is a prerendered Next.js 16
+application; its two server-only routes call OpenRouter for graph generation
+and Artificial Analysis for current model metrics.
 
-- Firebase Hosting site: `knight-ai-stack-builder`
-- Cloud Run service: `ai-stack-builder-api` in `us-central1`
-- Google Cloud project: `knight-ai-av-site`
-- Runtime service account: `ai-stack-builder-runtime@knight-ai-av-site.iam.gserviceaccount.com`
-- Cost posture: zero minimum instances, one maximum instance, one CPU, 512 MiB, and a 50-second request timeout
-- Secrets: numeric, pinned Secret Manager versions; never client variables or image build arguments
+## Preserved source architecture
 
-Firebase serves the static app and immutable Next chunks directly. Only `/api/**` is rewritten to Cloud Run. The Cloud Run container uses Next standalone output, runs as a non-root user, and exposes a provider-independent `/api/health` endpoint.
+This branch records the Google-only Firebase Hosting plus scale-to-zero Cloud
+Run design. It is not a claim that the recorded source exactly matches every
+live resource. The immutable identifiers and observed live/deployed-source
+split are recorded in the retirement manifest.
 
 The API layer applies same-origin checks, hashed-client rate limits, bounded concurrency, strict payload and response schemas, request/provider timeouts, maximum body sizes, safe public errors, sanitized structured logs, and a bounded metrics cache with stale-on-provider-error behavior. AI output is treated as untrusted and must pass the exact graph schema before reaching the client.
 
